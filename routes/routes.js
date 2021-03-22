@@ -12,6 +12,7 @@ router.get("/stats", (req, res)=>{
 
 router.get("/api/workouts", (req, res)=>{
     Workout.find().limit(1).sort({day: -1}).then(dbResult => {
+        console.log(dbResult);
         res.send(dbResult);
     });
 });
