@@ -12,14 +12,13 @@ router.get("/stats", (req, res)=>{
 
 router.get("/api/workouts", (req, res)=>{
     Workout.find().limit(1).sort({day: -1}).then(dbResult => {
-        console.log(dbResult);
         res.send(dbResult);
     });
 });
 
 //make a new workout
 router.post("/api/workouts", (req, res)=>{
-    Workout.create({day: new Date()}).then(dbExercise => {
+    Workout.create({day: new Date(), totalDuration: 0}).then(dbExercise => {
         res.json(dbExercise);
     }).catch(err => {
         res.status(400).json(err);
@@ -28,9 +27,15 @@ router.post("/api/workouts", (req, res)=>{
 
 //adding an exercise to workout at _id
 router.put("/api/workouts/:id", (req, res)=>{
-    Workout.updateOne({_id: mongojs.ObjectId(req.params.id)}, {$push: {exercises: req.body}})
+    Workout.updateOne({_id: mongojs.ObjectId(req.params.id)}, 
+        {$push: {exercises: req.body}})
         .then(dbExercise => {
-            console.log(dbExercise);
+            Workout.updateOne({_id: mongojs.ObjectId(req.params.id)}, 
+            {$inc: {totalDuration: req.body.duration}}).then(dbExercise2=>{
+                res.json(dbExercise2);
+            }).catch(err=>{
+                res.status(400).json(err);
+            });
             res.json(dbExercise);
         }).catch(err => {
             res.status(400).json(err);

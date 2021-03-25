@@ -5,6 +5,9 @@ const Schema = mongoose.Schema;
 const workoutSchema = new Schema({
     
     day: Date,
+    totalDuration: {
+        type: Number
+    },
     exercises: [{
         type: {
             type: String,
@@ -24,9 +27,6 @@ const workoutSchema = new Schema({
             type: Number
         },
         sets: {
-            type: Number
-        },
-        duration: {
             type: Number
         },
         distance: {
